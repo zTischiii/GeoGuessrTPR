@@ -87,6 +87,3 @@ async def party(ctx):
     finally:
         if driver:
             driver.quit()
-
-# Bot Token
-# bot.run('github nervt darf meinen token nicht in ein öffentliches repo pushen')
