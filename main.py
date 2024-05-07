@@ -87,5 +87,3 @@ async def party(ctx):
     finally:
         if driver:
             driver.quit()
-
-# Eigentlich hier Bot Token, allerdings GitHub nein
