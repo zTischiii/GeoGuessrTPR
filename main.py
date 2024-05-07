@@ -1,3 +1,5 @@
+import discord
+from discord.ext import commands
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -7,17 +9,17 @@ import time
 import os
 import json
 
+# Funktionen Programmablauf #1
 def accept_cookies(driver):
     try:
-        # Warten Sie maximal 10 Sekunden, bis der Cookie-Akzeptieren-Button erscheint
         wait = WebDriverWait(driver, 10)
         accept_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@id='accept-choices']")))
         accept_button.click()
         print("Cookies wurden akzeptiert.")
     except Exception as e:
-        # Wenn der Button nicht gefunden wird, wird eine Nachricht ausgegeben
         print("Cookie-Zustimmung nicht gefunden oder bereits akzeptiert.")
 
+#Anmelde-Cookie
 def save_cookie(driver, path):
     with open(path, 'w') as filehandler:
         json.dump(driver.get_cookies(), filehandler)
@@ -35,14 +37,14 @@ def geoguessr_sign_in(email, password, cookie_path='cookies.json'):
         load_cookie(driver, cookie_path)
         driver.refresh()
         time.sleep(3)
-        accept_cookies(driver)  # Akzeptiere Cookies nach dem Laden der Seite
+        accept_cookies(driver)
         if driver.current_url != "https://www.geoguessr.com/de/signin":
-            navigate_to_party_page(driver)
-            return driver
+            text_content = navigate_to_party_page(driver)
+            return driver, text_content
 
     driver.get("https://www.geoguessr.com/de/signin")
     time.sleep(2)
-    accept_cookies(driver)  # Akzeptiere Cookies, falls die Meldung hier erscheint
+    accept_cookies(driver)
     email_input = driver.find_element(By.CSS_SELECTOR, "input[data-qa='email-field']")
     email_input.send_keys(email)
     password_input = driver.find_element(By.CSS_SELECTOR, "input[data-qa='password-field']")
@@ -50,8 +52,8 @@ def geoguessr_sign_in(email, password, cookie_path='cookies.json'):
     password_input.send_keys(Keys.RETURN)
     time.sleep(5)
     save_cookie(driver, cookie_path)
-    navigate_to_party_page(driver)
-    return driver
+    text_content = navigate_to_party_page(driver)
+    return driver, text_content
 
 def navigate_to_party_page(driver):
     driver.get("https://www.geoguessr.com/party")
@@ -59,14 +61,32 @@ def navigate_to_party_page(driver):
     button = wait.until(EC.element_to_be_clickable(
         (By.XPATH, "/html/body/div[1]/div[2]/div[2]/main/div/div[2]/div/div/div[2]/div/div/div[1]/div/button")))
     button.click()
-
-    # Warte, bis das Input-Feld geladen ist, und lese dann den Textinhalt aus
     input_field = wait.until(EC.visibility_of_element_located(
         (By.XPATH, "/html/body/div[1]/div[2]/div[1]/div[2]/div/div[2]/div[4]/div/div/div/div/span/input")))
     text_content = input_field.get_attribute("value")
     print("Textinhalt des Feldes:", text_content)
+    return text_content
 
-if __name__ == "__main__":
-    email = "ben-hobson@hotmail.co.uk"
-    password = "Theappletree1"
-    driver = geoguessr_sign_in(email, password)
+# Discord Bot (Intents) <- Müssen ggf. angepasst werden.
+intents = discord.Intents.default()
+intents.messages = True
+intents.guilds = True
+
+bot = commands.Bot(command_prefix='!', intents=intents)
+
+@bot.command()
+async def party(ctx):
+    try:
+        # gff. Datenbank oder Cookie
+        email = "Ihre_Email"
+        password = "Ihr_Passwort"
+        driver, text_content = geoguessr_sign_in(email, password)
+        await ctx.send("Textinhalt des Feldes: " + text_content)
+    except Exception as e:
+        await ctx.send(f"Ein Fehler ist aufgetreten: {str(e)}")
+    finally:
+        if driver:
+            driver.quit()
+
+# Bot Token
+bot.run('MTIzNzQxNzY4NTQyODQ2OTc3MA.G6qVu4.8AEx3GYVOOlejXKKcghZFMAwgkM8eA4b_oZMvk')
