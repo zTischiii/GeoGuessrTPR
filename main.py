@@ -8,6 +8,17 @@ import os
 import json
 
 
+def accept_cookies(driver):
+    try:
+        wait = WebDriverWait(driver, 10)
+        accept_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@id='accept-choices']")))
+        accept_button.click()
+        print("Cookies wurden akzeptiert.")
+    except Exception as e:
+        # Wenn der Button nicht gefunden wird, wird eine Nachricht ausgegeben
+        print("Cookie-Zustimmung nicht gefunden oder bereits akzeptiert.")
+
+
 def save_cookie(driver, path):
     with open(path, 'w') as filehandler:
         json.dump(driver.get_cookies(), filehandler)
