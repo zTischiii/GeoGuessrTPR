@@ -8,7 +8,6 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import os
 import json
-
 # Funktionen Programmablauf #1
 def accept_cookies(driver):
     try:
@@ -18,18 +17,15 @@ def accept_cookies(driver):
         print("Cookies wurden akzeptiert.")
     except Exception as e:
         print("Cookie-Zustimmung nicht gefunden oder bereits akzeptiert.")
-
 #Anmelde-Cookie
 def save_cookie(driver, path):
     with open(path, 'w') as filehandler:
         json.dump(driver.get_cookies(), filehandler)
-
 def load_cookie(driver, path):
     with open(path, 'r') as cookiesfile:
         cookies = json.load(cookiesfile)
     for cookie in cookies:
         driver.add_cookie(cookie)
-
 def geoguessr_sign_in(email, password, cookie_path='cookies.json'):
     driver = webdriver.Chrome()
     driver.get("https://www.geoguessr.com")
@@ -41,7 +37,6 @@ def geoguessr_sign_in(email, password, cookie_path='cookies.json'):
         if driver.current_url != "https://www.geoguessr.com/de/signin":
             text_content = navigate_to_party_page(driver)
             return driver, text_content
-
     driver.get("https://www.geoguessr.com/de/signin")
     time.sleep(2)
     accept_cookies(driver)
@@ -54,7 +49,6 @@ def geoguessr_sign_in(email, password, cookie_path='cookies.json'):
     save_cookie(driver, cookie_path)
     text_content = navigate_to_party_page(driver)
     return driver, text_content
-
 def navigate_to_party_page(driver):
     driver.get("https://www.geoguessr.com/party")
     wait = WebDriverWait(driver, 10)
@@ -66,14 +60,11 @@ def navigate_to_party_page(driver):
     text_content = input_field.get_attribute("value")
     print("Textinhalt des Feldes:", text_content)
     return text_content
-
 # Discord Bot (Intents) <- Müssen ggf. angepasst werden.
 intents = discord.Intents.default()
 intents.messages = True
 intents.guilds = True
-
 bot = commands.Bot(command_prefix='!', intents=intents)
-
 @bot.command()
 async def party(ctx):
     try:
