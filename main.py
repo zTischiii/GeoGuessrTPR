@@ -78,8 +78,8 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 async def party(ctx):
     try:
         # gff. Datenbank oder Cookie
-        email = "Ihre_Email"
-        password = "Ihr_Passwort"
+        email = "Email"
+        password = "Passwort"
         driver, text_content = geoguessr_sign_in(email, password)
         await ctx.send("Textinhalt des Feldes: " + text_content)
     except Exception as e:
@@ -89,4 +89,4 @@ async def party(ctx):
             driver.quit()
 
 # Bot Token
-bot.run('MTIzNzQxNzY4NTQyODQ2OTc3MA.G6qVu4.8AEx3GYVOOlejXKKcghZFMAwgkM8eA4b_oZMvk')
+bot.run('github nervt. darf meinen token nicht in ein öffentliches repo pushen')
