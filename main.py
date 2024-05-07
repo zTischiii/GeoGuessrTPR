@@ -79,3 +79,4 @@ async def party(ctx):
         if driver:
             driver.quit()
 
+    bot.run('BotID_die_ich_nicht_preisgebe')
