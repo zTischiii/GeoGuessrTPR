@@ -111,6 +111,7 @@ intents.messages = True
 intents.guilds = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+
 @bot.command()
 async def party(ctx, *, modes: str):
     if not modes.startswith("(") or not modes.endswith(")"):
